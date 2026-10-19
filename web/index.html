@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Garuda AI Sports Analytics & Competition Platform</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-brand">
+        <div class="logo-badge">GSI</div>
+        <div>
+          <h1>Garuda AI Sports Analytics</h1>
+          <p class="subtitle">Computer Vision Player Tracking • Redis Telemetry • Competition Automation</p>
+        </div>
+      </div>
+      <div class="header-badges">
+        <span class="badge badge-ai">YOLOv8 + ByteTrack</span>
+        <span class="badge badge-redis" id="redisBadge">Redis Pipeline: Ready</span>
+        <span class="badge badge-status" id="systemStatus">Online</span>
+      </div>
+    </header>
+
+    <!-- Nav Tabs -->
+    <nav class="nav-tabs">
+      <button class="tab-btn active" onclick="switchTab('visionTab')">⚽ Vision & Live Telemetry</button>
+      <button class="tab-btn" onclick="switchTab('competitionTab')">🏆 Competition & Schedule Engine</button>
+      <button class="tab-btn" onclick="switchTab('scoutingTab')">📋 NLP Scouting Reports</button>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="tab-content">
+      <!-- TAB 1: VISION & TELEMETRY -->
+      <section id="visionTab" class="tab-pane active">
+        <div class="grid-2col">
+          <!-- Left: 2D Pitch Radar -->
+          <div class="card pitch-card">
+            <div class="card-header">
+              <h2>2D Pitch Radar & Spatial Tracking (105m × 68m)</h2>
+              <div class="pitch-controls">
+                <button class="btn btn-sm" id="btnToggleHeatmap" onclick="toggleHeatmap()">Toggle Heatmap</button>
+                <button class="btn btn-sm btn-primary" id="btnRunAnalysis" onclick="triggerAnalysis()">Run Sample Match Analysis</button>
+              </div>
+            </div>
+            <div class="pitch-container">
+              <canvas id="pitchCanvas" width="700" height="453"></canvas>
+            </div>
+            <div class="pitch-legend">
+              <span class="legend-item"><span class="dot dot-team-a"></span> Tim Garuda (Track 1-11)</span>
+              <span class="legend-item"><span class="dot dot-team-b"></span> Tim Lawan (Track 12-22)</span>
+              <span class="legend-item"><span class="dot dot-ball"></span> Bola</span>
+              <span class="legend-item"><span class="dot dot-sprint"></span> Sprint (> 20 km/jam)</span>
+            </div>
+          </div>
+
+          <!-- Right: Real-time Telemetry Stats -->
+          <div class="card stats-card">
+            <div class="card-header">
+              <h2>Live Player Physical Metrics</h2>
+              <span class="live-indicator"><span class="pulse"></span> Active Stream</span>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table" id="metricsTable">
+                <thead>
+                  <tr>
+                    <th>Player ID</th>
+                    <th>Jarak (km)</th>
+                    <th>Top Speed</th>
+                    <th>Avg Speed</th>
+                    <th>Sprint</th>
+                    <th>Intensitas</th>
+                  </tr>
+                </thead>
+                <tbody id="metricsTableBody">
+                  <tr>
+                    <td colspan="6" class="text-center text-muted">Memuat data analisis pertandingan...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: COMPETITION & SCHEDULE ENGINE -->
+      <section id="competitionTab" class="tab-pane">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2>Competition Schedule Conflict Engine</h2>
+              <p class="card-desc">Deteksi otomatis tumpang-tindih venue/stadion, jeda istirahat tim (&lt;48 jam), dan penugasan wasit.</p>
+            </div>
+            <div class="btn-group">
+              <button class="btn btn-sm" onclick="loadSampleSchedule('valid')">Load Jadwal Ideal</button>
+              <button class="btn btn-sm btn-danger" onclick="loadSampleSchedule('conflict')">Simulasi Jadwal Bentrok</button>
+              <button class="btn btn-sm btn-primary" onclick="validateSchedule()">Validasi Jadwal</button>
+            </div>
+          </div>
+
+          <div class="schedule-diagnostic" id="diagnosticBox">
+            <div class="diagnostic-title">Status Validasi Jadwal:</div>
+            <div id="diagnosticContent" class="text-muted">Klik "Validasi Jadwal" untuk memeriksa konflik.</div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table" id="scheduleTable">
+              <thead>
+                <tr>
+                  <th>Match ID</th>
+                  <th>Turnamen</th>
+                  <th>Pertandingan (Home vs Away)</th>
+                  <th>Stadion / Venue</th>
+                  <th>Waktu Kick-off</th>
+                  <th>Wasit Utama</th>
+                </tr>
+              </thead>
+              <tbody id="scheduleTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: NLP SCOUTING REPORTS -->
+      <section id="scoutingTab" class="tab-pane">
+        <div class="card">
+          <div class="card-header">
+            <h2>Automated NLP Scouting & Match Evaluation</h2>
+            <select id="playerReportSelect" class="form-select" onchange="displaySelectedPlayerReport()">
+              <option value="match">Ringkasan Pertandingan Keseluruhan</option>
+            </select>
+          </div>
+          <div class="report-box" id="reportContent">
+            Memuat laporan pertandingan...
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>Garuda Sepak Bola Indonesia (GSI) • AI Engineering & Competition Intelligence • Developed by Ilham Firmansyah</p>
+    </footer>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
